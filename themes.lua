@@ -1,3 +1,4 @@
+-- themes.lua
 local soundservice = game:GetService("SoundService")
 local runservice = game:GetService("RunService")
 local workspace = game:GetService("Workspace")
@@ -24,7 +25,6 @@ local activeSounds = {}
 local activeSounds2 = {}
 local activeSounds3 = {}
 
--- These are the variables that will be toggled from the main script
 local audioReplacerActive = false
 local audioReplacerActive2 = false
 local audioReplacerActive3 = false
@@ -93,15 +93,18 @@ workspace.DescendantAdded:Connect(
 
 runservice.Heartbeat:Connect(checkAudioPlaying)
 
--- Function to toggle audio replacers from the main script
-function ToggleAudioReplacer1()
-    audioReplacerActive = not audioReplacerActive
-end
-
-function ToggleAudioReplacer2()
-    audioReplacerActive2 = not audioReplacerActive2
-end
-
-function ToggleAudioReplacer3()
-    audioReplacerActive3 = not audioReplacerActive3
-end
+-- Explicitly return the functions
+return {
+    ToggleAudioReplacer1 = function()
+        audioReplacerActive = not audioReplacerActive
+    end,
+    ToggleAudioReplacer2 = function()
+        audioReplacerActive2 = not audioReplacerActive2
+    end,
+    ToggleAudioReplacer3 = function()
+        audioReplacerActive3 = not audioReplacerActive3
+    end,
+    audioReplacerActive = audioReplacerActive,
+    audioReplacerActive2 = audioReplacerActive2,
+    audioReplacerActive3 = audioReplacerActive3
+}
