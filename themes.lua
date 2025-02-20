@@ -93,7 +93,7 @@ workspace.DescendantAdded:Connect(
 
 runservice.Heartbeat:Connect(checkAudioPlaying)
 
--- Explicitly return the functions
+-- Explicitly return the functions and states
 return {
     ToggleAudioReplacer1 = function()
         audioReplacerActive = not audioReplacerActive
