@@ -93,10 +93,11 @@ function MessageBoxT.Show(option)
     local MessageIcon = tostring(option.MessageBoxIcon) and option.MessageBoxIcon or "Warning"
     local ResultCallback = typeof(option.Result) == "function" and option.Result or function() end
     local MessageTitle = tostring(option.Text) and option.Text or ""
-    local CustomPos = option.Position or UDim2.new(1, -10, 0, 10) -- Set position to top-right
 
+    -- Set the anchor point to the top-right corner and position accordingly
+    local CustomPos = option.Position or UDim2.new(1, -10, 0, 10) 
+   
     local GUI
-
     if (game.CoreGui:FindFirstChild("Notifications")) then 
         GUI = game.CoreGui:FindFirstChild("Notifications")
     else 
@@ -108,10 +109,12 @@ function MessageBoxT.Show(option)
     MessageBox["UIScale"].Scale = 1
     MessageBox:Clone()
     MessageBox.Parent = GUI
-    MessageBox.AnchorPoint = Vector2.new(1, 0) -- Set anchor point to top-right
+
+    -- Anchor the box to the top-right and offset accordingly
+    MessageBox.AnchorPoint = Vector2.new(1, 0)
     MessageBox.Position = CustomPos
 
-    --// Applying Options
+    -- Apply UI elements
     MessageBox["Message-Header"]["Box-Title"].Text = MessageTitle
     MessageBox["MessageDescription"].Text = MessageDescription
     MessageBox["Message-Icons"]["Error"].Image = MessageBoxT.BoxIcons["Error"]
@@ -132,7 +135,6 @@ function MessageBoxT.Show(option)
     end
 
     MessageBox["UIScale"].Scale = 0
-
     game.TweenService:Create(MessageBox["UIScale"], TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
         Scale = 1
     }):Play()
