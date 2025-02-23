@@ -88,18 +88,19 @@ end
 
 function MessageBoxT.Show(option)
     option = typeof(option) == "table" and option or {}
-    local MessageDescription = tostring(option.Description) and option.Description or "This is a Notification"
+    local MessageDescription = tostring(option.Description) and option.Description or "This is an Notification"
     local Options = tostring(option.MessageBoxButtons) and option.MessageBoxButtons or "OK"
     local MessageIcon = tostring(option.MessageBoxIcon) and option.MessageBoxIcon or "Warning"
     local ResultCallback = typeof(option.Result) == "function" and option.Result or function() end
     local MessageTitle = tostring(option.Text) and option.Text or ""
+    local CustomPos = option.Position or UDim2.new(0.5,0,0.5,0)
 
-    -- Set the anchor point to the top-right corner and position accordingly
-    local CustomPos = option.Position or UDim2.new(1, -10, 0, 10) 
-   
     local GUI
+
+    local Addup = 0
+
     if (game.CoreGui:FindFirstChild("Notifications")) then 
-        GUI = game.CoreGui:FindFirstChild("Notifications")
+	GUI = game.CoreGui:FindFirstChild("Notifications")
     else 
         GUI = Instance.new("ScreenGui", game.CoreGui)
         GUI.Name = "Notifications"
@@ -109,12 +110,10 @@ function MessageBoxT.Show(option)
     MessageBox["UIScale"].Scale = 1
     MessageBox:Clone()
     MessageBox.Parent = GUI
-
-    -- Anchor the box to the top-right and offset accordingly
-    MessageBox.AnchorPoint = Vector2.new(1, 0)
     MessageBox.Position = CustomPos
+    MessageBox.Position = UDim2.new(0, MessageBox.AbsolutePosition.X, 0, MessageBox.AbsolutePosition.Y)
 
-    -- Apply UI elements
+    --// Applying Options
     MessageBox["Message-Header"]["Box-Title"].Text = MessageTitle
     MessageBox["MessageDescription"].Text = MessageDescription
     MessageBox["Message-Icons"]["Error"].Image = MessageBoxT.BoxIcons["Error"]
@@ -132,9 +131,35 @@ function MessageBoxT.Show(option)
         Buttons = MessageBox["MessageBoxButtons"][Options]:Clone()
         Buttons.Visible = true
         Buttons.Parent = MessageBox
+        Addup = 36
+    else
+        Addup = 6
+    end
+
+    if MessageBox["MessageDescription"].TextBounds.Y >= 16 then
+        MessageBox["MessageDescription"].Position = UDim2.new(0, 48,0, 42)
+        Addup -= 14
+    end
+
+    MessageBox.Size = UDim2.new(0, MessageBox["MessageDescription"].TextBounds.X + 100,0, MessageBox["MessageDescription"].TextBounds.Y + 70 + Addup)
+    
+    if Buttons ~= nil then
+        for i,v in pairs(Buttons:GetChildren()) do
+            if v:IsA("TextButton") then
+                v.MouseButton1Click:Connect(function()
+                    ResultCallback(v.Text)
+                    game.TweenService:Create(MessageBox["UIScale"], TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Scale = 0
+                    }):Play()
+                    wait(0.1)
+                    MessageBox:Destroy()
+                end)
+            end
+        end
     end
 
     MessageBox["UIScale"].Scale = 0
+
     game.TweenService:Create(MessageBox["UIScale"], TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
         Scale = 1
     }):Play()
